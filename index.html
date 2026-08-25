@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>COMP4020 prototype</title>
+    <title>Squeeze</title>
     <meta
       name="description"
-      content="Replace this with one sentence saying what this page is. A search result and a link preview both show it."
+      content="A tiny reflex game about staying inside a shrinking window."
     />
 
     <!--
@@ -27,11 +27,16 @@
       </nav>
     </header>
     <main>
-      <h1>COMP4020 prototype</h1>
-      <p>
-        Replace this with your prototype. This week's brief is on the course website;
-        <code>spec/README.md</code> explains how the checks in this repo relate to it.
-      </p>
+      <h1>Squeeze</h1>
+      <div class="hud">
+        <span class="score" data-testid="score">0</span>
+        <span class="lives" data-testid="lives" aria-label="3 lives remaining">●●●</span>
+      </div>
+      <div class="track" data-testid="track" aria-label="Squeeze">
+        <div class="band" data-testid="band"></div>
+        <div class="price" data-testid="price"></div>
+      </div>
+      <p class="status" data-testid="status" hidden></p>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>
