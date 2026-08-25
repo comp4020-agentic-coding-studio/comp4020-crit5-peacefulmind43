@@ -1,70 +1,52 @@
 # Process overview
 
-<!-- TEMPLATE: this file is a shape to fill in, not a form. Replace everything
-     in it with your own overview, and delete this comment — `pnpm
-     check:evidence` will remind you if it's still here. -->
-
-A reading-guide to how the work came together --- a map to your process, not an
-essay about it. Markers read this file and follow its citations; they don't
-trawl the repo for evidence you didn't point at, so if a moment mattered, cite
-it.
-
-This file is the shape; the course site's
-[assessment page](https://comp.anu.edu.au/courses/comp4020-agentic-coding-studio/topics/assessment/#what-you-submit)
-is the requirement, and its
-[word counts](https://comp.anu.edu.au/courses/comp4020-agentic-coding-studio/topics/assessment/#word-counts)
-cover every deliverable.
+A reading-guide to how the work came together.
 
 ## What I built
 
-One paragraph: the thing, and the idea behind it.
+Squeeze, a one-mechanic reflex game about market making. A "price" random-walks
+up and down a vertical track; your quote band follows the pointer and has to
+keep containing it. Staying contained builds score for as long as you hold it;
+sitting outside the band for more than a third of a second costs a life, with a
+short invulnerability window so one long breach can't chain through every life
+before you can react. The band narrows and the price accelerates as you score,
+so the same mechanic gets harder to sustain the longer you survive. Nothing on
+the page explains any of this --- the band visibly follows the mouse the
+instant the page loads, which is the entire tutorial.
 
 ## The moments that mattered
 
-Three or four for an assignment; fewer is fine for a weekly prototype. Keep the
-list short so each moment has room to do all four jobs:
+The harness came from crit-4's `CLAUDE.md`, carried forward and reworded for a
+game instead of an audio instrument rather than pasted wholesale --- the
+template itself had changed shape again since crit 4 (it had dropped a section
+crit 4's version had), so the diff mattered more than the copy
+([`35a9a4e`](https://github.com/comp4020-agentic-coding-studio/comp4020-crit5-peacefulmind43/commit/35a9a4e)).
 
-1. **what happened** --- the problem, or the thing that went wrong
-2. **what you did instead of the obvious thing** --- the call you made, and why
-   it beat the obvious one
-3. **how you knew it was right** --- the check you ran, the viewport you looked
-   at, what you read before accepting the diff
-4. **the citation** --- a commit or commit range, a `CLAUDE.md` change, a check
-   that went from red to green, a prompt paired with the commit it produced
+I explored a few concepts before settling on this one, including a discrete
+timing-click game, but it didn't have the right feel for what I actually
+wanted: a mechanic about continuously managing exposure rather than reacting to
+single moments, which is closer to what makes market making interesting.
+Squeeze's core rule --- contain the price or start losing lives --- is a small
+pure state machine with no DOM and no timers, which is what
+`spec/crit-5.test.ts` exercises directly: boundary containment, a brief breach
+costing nothing, a sustained breach costing exactly one life, the grace period
+stopping one breach from chaining through every life, and a finished game
+refusing to revive on a stray tick
+([`0455c72`](https://github.com/comp4020-agentic-coding-studio/comp4020-crit5-peacefulmind43/commit/0455c72)).
 
-Jobs 2 and 3 are the ones the repo can't tell a reader on its own, so they're
-where the marks are. The strongest moments are the ones where a correction
-landed in the **harness** --- the standards and checks your work has to satisfy
---- rather than in a retry: a rule added to `CLAUDE.md`, a check wired up, an
-attempt thrown away. Retrying until it passes is the routine case, and changing
-what the work runs against is the skilled one.
-
-Cite each moment as a link whose text is the commit hash or range and whose
-target is this repo's commit or compare URL, so a reader clicks straight to the
-evidence:
-
-- one commit: [`a1b2c3d`](https://github.com/YOUR-ORG/YOUR-REPO/commit/a1b2c3d)
-- a range:
-  [`a1b2c3d...e4f5a6b`](https://github.com/YOUR-ORG/YOUR-REPO/compare/a1b2c3d...e4f5a6b)
-
-To pair a prompt with the commit it produced, quote the prompt (curated, not a
-full transcript) next to the citation:
-
-> the prompt, verbatim
-
-Screenshots are welcome where one carries the verification better than a
-sentence does. Commit the file to this repo and link it with a **relative**
-path, which is what makes it render on GitHub: `![alt text](docs/before.png)`.
-Images don't count towards the word count and don't replace the citation.
-
-## Before you ship
-
-`pnpm check:evidence` verifies your citations resolve to real commits, that a
-reflection entry the marker reads is in `reflections/`, and that your
-`CLAUDE.md` is there --- before a marker ever opens the file. It checks that
-your map is traceable, not that it is good: the marker judges whether your
-small, deliberately chosen set of moments shows real judgement and reflection. A
-green check is not a substitute for that curation.
-
-Images aren't checked: unlike a citation whose SHA doesn't resolve, a broken
-image is visible the moment this file is rendered on GitHub.
+That same commit is also where the one change driven by actually playing the
+game, rather than reading the code, landed. The pointer-to-band mapping read
+perfectly reasonably --- pointer Y as a fraction of the window height --- and
+passed every unit test, because none of the unit tests touch DOM geometry at
+all; that logic is deliberately outside the pure, tested core. Driving a real
+headless browser across the actual visible track, not the whole window, showed
+the real problem: hovering across the entire track only swept the band from
+about 14% to 61% of its range, because the track sits in the middle of the page
+rather than spanning it edge to edge. A player moving their mouse near the
+thing they're looking at --- which is what every real player does --- could
+never reach the top or bottom of their own play field, making losses feel
+arbitrary rather than earned. Remapping against the track's own
+`getBoundingClientRect()` instead of `window.innerHeight` fixed it, confirmed
+by moving a real pointer across the real track before and after and checking
+the band actually reached both ends. Reading the line never would have caught
+this; only driving the control the way a player actually would did.
