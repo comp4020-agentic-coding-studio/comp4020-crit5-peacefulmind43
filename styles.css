@@ -38,7 +38,7 @@ nav a {
 }
 
 main {
-  max-width: 26rem;
+  max-width: 48rem;
   margin: 0 auto;
   padding: 1rem 1.5rem 4rem;
   display: flex;
@@ -79,11 +79,11 @@ h1 {
 
 .track {
   position: relative;
-  width: 4.5rem;
-  height: min(56vh, 24rem);
+  width: min(92vw, 44rem);
+  height: min(44vh, 20rem);
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 0.75rem;
   overflow: hidden;
   transition: border-color 0.15s ease;
 }
@@ -94,6 +94,14 @@ h1 {
 
 .track.breach {
   border-color: var(--bad);
+}
+
+.chart {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .band {
