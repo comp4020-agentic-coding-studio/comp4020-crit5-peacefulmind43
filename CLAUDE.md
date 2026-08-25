@@ -25,6 +25,29 @@ ship. CI runs the same plus links, secrets and the deploy.
 `spec/README.md`, `PROCESS.md` and `reflections/README.md` are in this repo and
 say what they are for.
 
+## Rules learned so far
+
+Carried forward from crit 4 (a Web Audio instrument, not a game) --- only the
+stack-independent lessons survive the switch in domain:
+
+- **Don't trust that a mechanic is wired right just because the code reads
+  right --- drive the actual control and watch the outcome.** A `<select>`
+  listener that looked correct silently dropped scripted `input` events; an
+  instrument's release handler that read correctly still let sound ring on
+  forever because a *different* always-on part of the signal chain (an
+  ambient drone) was never wired to stop. For a game: don't assume a
+  collision, a win condition, or a score update fires just because the call
+  site looks right --- actually play the move and watch the state change.
+- **When a fix doesn't land and the obvious suspect checks out clean, measure
+  the whole output, not just the piece you already suspect.** Re-inspecting
+  code you already convinced yourself was correct wastes a cycle; instrument
+  the actual observable behaviour instead (what's on screen, what state
+  changed, what a headless browser sees) and let that redirect you.
+- **Rule out the tool before you believe the page is broken.** A scripted
+  interaction that changes nothing might be the automation failing to drive
+  that specific control, not a bug in the page. Cross-check with a different
+  input or a manual pass before trusting a negative result.
+
 ## This file is yours
 
 A starting point, not a rulebook: what you add to it is the harness, and the
